@@ -39,17 +39,17 @@ jobs:
       
       # this generates the .env file for the 'dev-ci' stage
       - name: export env
-        run: npx sls export-env --all -s dev-ci
+        run: npx sls export-env --all -s dev-ci --param="ssmStage=dev"
       
       # apply seed data to dev-ci stage
       - name: add seed data
         run: node seed-restaurants.js
 
       - name: run integration test
-        run: npm run test
+        run: npx cross-env TEST_MODE=handler jest
 
       - name: run acceptance tests
-        run: npm run acceptance
+        run: npx cross-env TEST_MODE=http jest
 
       # delete the 'dev-ci' stage
       - name: destroy temp environment
