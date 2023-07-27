@@ -57,6 +57,10 @@ provider:
           Resource:
             - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/${param:ssmStage, sls:stage}/get-restaurants/config
             - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/${param:ssmStage, sls:stage}/search-restaurants/config
+            - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${self:service}/${param:ssmStage, sls:stage}/search-restaurants/secretString
+        - Effect: Allow
+          Action: kms:Decrypt
+          Resource: ${ssm:/${self:service}/${sls:stage}/kmsArn}
 
 plugins:
   - serverless-export-env
