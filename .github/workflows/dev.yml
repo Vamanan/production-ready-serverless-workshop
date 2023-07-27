@@ -35,7 +35,7 @@ jobs:
       
       # this provisions a temporary stage called 'dev-ci'
       - name: deploy temp environment
-        run: npx sls deploy -s dev-ci
+        run: npx sls deploy -s dev-ci --param="ssmStage=dev"
       
       # this generates the .env file for the 'dev-ci' stage
       - name: export env
