@@ -53,7 +53,7 @@ jobs:
 
       # delete the 'dev-ci' stage
       - name: destroy temp environment
-        run: npx sls remove -s dev-ci
+        run: npx sls remove -s dev-ci --param="ssmStage=dev"
               
       - name: deploy to dev
-        run: npx sls deploy
+        run: npx sls deploy 
