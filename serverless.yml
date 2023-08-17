@@ -40,6 +40,9 @@ custom:
     default: INFO
   serverless-iam-roles-per-function:
     defaultInherit: true
+  lumigo:
+    token: t_8d9dee527332472d92e3a
+    nodePackageManager: npm
 
 
 provider:
@@ -75,6 +78,7 @@ plugins:
   - serverless-export-outputs
   - serverless-plugin-extrinsic-functions
   - serverless-iam-roles-per-function
+  - serverless-lumigo
 
 # you can overwrite defaults here
 #  stage: dev
