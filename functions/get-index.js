@@ -1,3 +1,7 @@
+const { Logger, injectLambdaContext } = require('@aws-lambda-powertools/logger')
+const middy = require('@middy/core')
+const logger = new Logger({ serviceName: process.env.serviceName })
+
 const fs = require("fs")
 const Mustache = require('mustache')
 const http = require('axios')
@@ -25,7 +29,7 @@ function loadHtml () {
 }
 
 const getRestaurants = async () => {
-  console.log(`loading restaurants from ${restaurantsApiRoot}...`)
+  logger.debug('getting restaurants...', { url: restaurantsApiRoot })
   const url = URL.parse(restaurantsApiRoot)
   const opts = {
     host: url.hostname,
@@ -40,7 +44,8 @@ const getRestaurants = async () => {
   return (await httpReq).data
 }
 
-module.exports.handler = async (event, context) => {
+module.exports.handler = middy(async (event, context) => {
+  logger.refreshSampleRateCalculation()
   const template = loadHtml()
   const restaurants = await getRestaurants()
   const dayOfWeek = days[new Date().getDay()]
@@ -63,4 +68,4 @@ module.exports.handler = async (event, context) => {
   }
 
   return response
-}
+}).use(injectLambdaContext(logger))
