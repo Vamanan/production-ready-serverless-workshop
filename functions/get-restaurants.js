@@ -1,13 +1,16 @@
 const { Logger, injectLambdaContext } = require('@aws-lambda-powertools/logger')
 const logger = new Logger({ serviceName: process.env.serviceName })
-
 const { DynamoDB } = require("@aws-sdk/client-dynamodb")
+const { Tracer, captureLambdaHandler } = require('@aws-lambda-powertools/tracer')
+const tracer = new Tracer({ serviceName: process.env.serviceName })
+
 const { unmarshall } = require("@aws-sdk/util-dynamodb")
 const middy = require('@middy/core')
 const ssm = require('@middy/ssm')
 const middyCacheEnabled = JSON.parse(process.env.middy_cache_enabled)
 const middyCacheExpiry = parseInt(process.env.middy_cache_expiry_milliseconds)
 const dynamodb = new DynamoDB()
+tracer.captureAWSv3Client(dynamodb)
 
 const { serviceName, ssmStage } = process.env
 const tableName = process.env.restaurants_table
@@ -45,4 +48,4 @@ module.exports.handler = middy(async (event, context) => {
   fetchData: {
     config: `/${serviceName}/${ssmStage}/get-restaurants/config`
   }
-})).use(injectLambdaContext(logger))
+})).use(injectLambdaContext(logger)).use(captureLambdaHandler(tracer))

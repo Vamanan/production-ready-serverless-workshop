@@ -38,6 +38,9 @@ custom:
   logLevel:
     prod: INFO
     default: INFO
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+
 
 provider:
   name: aws
@@ -53,6 +56,17 @@ provider:
     LOG_LEVEL: ${self:custom.logLevel.${sls:stage}, self:custom.logLevel.default}
     POWERTOOLS_LOGGER_SAMPLE_RATE: 0.1
     POWERTOOLS_LOGGER_LOG_EVENT: true
+  tracing:
+    apiGateway: true
+    lambda: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - "xray:PutTraceSegments"
+            - "xray:PutTelemetryRecords"
+          Resource: "*"
 
 
 plugins:

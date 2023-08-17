@@ -1,6 +1,5 @@
 const { Logger, injectLambdaContext } = require('@aws-lambda-powertools/logger')
 const logger = new Logger({ serviceName: process.env.serviceName })
-
 const middy = require('@middy/core')
 const ssm = require('@middy/ssm')
 const middyCacheEnabled = JSON.parse(process.env.middy_cache_enabled)

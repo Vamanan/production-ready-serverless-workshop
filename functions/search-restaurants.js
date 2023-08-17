@@ -1,11 +1,14 @@
 const { Logger } = require('@aws-lambda-powertools/logger')
 const logger = new Logger({ serviceName: process.env.serviceName })
-
 const { DynamoDB } = require("@aws-sdk/client-dynamodb")
+const { Tracer, captureLambdaHandler } = require('@aws-lambda-powertools/tracer')
+const tracer = new Tracer({ serviceName: process.env.serviceName })
+
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb")
 const middleware = require('../util/middleware_util')
 
 const dynamodb = new DynamoDB()
+tracer.captureAWSv3Client(dynamodb)
 
 const { serviceName, ssmStage } = process.env
 
@@ -40,4 +43,4 @@ module.exports.handler = middleware(
   
     return response
   }
-)
+).use(captureLambdaHandler(tracer))
